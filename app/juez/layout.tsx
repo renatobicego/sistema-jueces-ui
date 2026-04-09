@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import JuezNav from "@/components/organisms/JuezNav";
@@ -11,14 +11,25 @@ export default function JuezLayout({
 }) {
   const router = useRouter();
   const juezSession = useAuthStore((s) => s.juezSession);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    // Allow unauthenticated access to /juez/login
-    if (!juezSession && typeof window !== "undefined") {
+    const unsub = useAuthStore.persist.onFinishHydration(() => {
+      setHydrated(true);
+    });
+    if (useAuthStore.persist.hasHydrated()) setHydrated(true);
+    return unsub;
+  }, []);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    if (!juezSession) {
       const path = window.location.pathname;
       if (!path.includes("/juez/login")) router.replace("/juez/login");
     }
-  }, [juezSession, router]);
+  }, [hydrated, juezSession, router]);
+
+  if (!hydrated) return null;
 
   return (
     <div className="bg-slate-50 min-h-screen">

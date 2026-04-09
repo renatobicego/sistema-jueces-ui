@@ -9,11 +9,18 @@ export function useAmaAuth() {
   const [error, setError] = useState<string | null>(null);
   const setAmaAuth = useAuthStore((s) => s.setAmaAuth);
 
-  const login = async (dni: string): Promise<AmaUser | null> => {
+  const login = async (
+    dni: string,
+    password?: string,
+  ): Promise<AmaUser | null> => {
     setLoading(true);
     setError(null);
     try {
-      const { data } = await amaApi.post("/auth/login", { dni });
+      const { data } = await amaApi.post("/auth/login", {
+        dni,
+        password,
+        sistemaJueces: true,
+      });
       const user: AmaUser = {
         uid: data.usuario.uid,
         nombre_apellido: data.usuario.nombre_apellido,

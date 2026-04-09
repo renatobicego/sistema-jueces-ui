@@ -9,12 +9,13 @@ import { ErrorText } from "@/components/atoms/ErrorText";
 
 export default function LoginPage() {
   const [dni, setDni] = useState("");
+  const [password, setPassword] = useState("");
   const { login, loading, error } = useAmaAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const user = await login(dni.trim());
+    const user = await login(dni.trim(), password);
     if (user) router.push("/admin/torneos");
   };
 
@@ -25,7 +26,7 @@ export default function LoginPage() {
           <div className="text-center">
             <h1 className="font-bold text-slate-800 text-2xl">Acceso Admin</h1>
             <p className="mt-1 text-slate-500 text-sm">
-              Ingresá tu DNI para continuar
+              Ingresá tu DNI y contraseña para continuar
             </p>
           </div>
 
@@ -38,6 +39,15 @@ export default function LoginPage() {
               type="text"
               inputMode="numeric"
               autoFocus
+              required
+              fullWidth
+            />
+            <CustomInput
+              label="Contraseña"
+              placeholder="••••••••"
+              value={password}
+              onValueChange={setPassword}
+              type="password"
               required
               fullWidth
             />

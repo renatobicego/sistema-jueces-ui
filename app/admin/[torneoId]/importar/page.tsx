@@ -7,6 +7,7 @@ import ImportErrorsGrid from "@/components/organisms/ImportErrorsGrid";
 import { SubmitButton } from "@/components/atoms/SubmitButton";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
 import { ErrorText } from "@/components/atoms/ErrorText";
+import { SuperJuezGuard } from "@/components/organisms/SuperJuezGuard";
 
 interface FilaFallida {
   fila: number;
@@ -58,65 +59,67 @@ export default function ImportarPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardContent className="space-y-4 p-6">
-          <h2 className="font-semibold text-slate-700">
-            Importar atletas desde XLS
-          </h2>
+    <SuperJuezGuard torneoId={torneoId}>
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="space-y-4 p-6">
+            <h2 className="font-semibold text-slate-700">
+              Importar atletas desde XLS
+            </h2>
 
-          <CustomSelect
-            label="Tipo de importación"
-            value={tipo}
-            onChange={setTipo}
-            items={[
-              { key: "cada", label: "CADA (federados)", value: "cada" },
-              { key: "libre", label: "Libre (no federados)", value: "libre" },
-            ]}
-          />
-
-          <div className="space-y-1">
-            <label className="font-medium text-slate-600 text-sm">
-              Archivo XLS/XLSX
-            </label>
-            <input
-              ref={fileRef}
-              type="file"
-              accept=".xls,.xlsx"
-              className="block hover:file:bg-primary-100 file:bg-primary-50 file:mr-4 file:px-4 file:py-2 file:border-0 file:rounded w-full file:font-medium text-slate-500 file:text-primary-700 text-sm file:text-sm"
+            <CustomSelect
+              label="Tipo de importación"
+              value={tipo}
+              onChange={setTipo}
+              items={[
+                { key: "cada", label: "CADA (federados)", value: "cada" },
+                { key: "libre", label: "Libre (no federados)", value: "libre" },
+              ]}
             />
+
+            <div className="space-y-1">
+              <label className="font-medium text-slate-600 text-sm">
+                Archivo XLS/XLSX
+              </label>
+              <input
+                ref={fileRef}
+                type="file"
+                accept=".xls,.xlsx"
+                className="block hover:file:bg-primary-100 file:bg-primary-50 file:mr-4 file:px-4 file:py-2 file:border-0 file:rounded w-full file:font-medium text-slate-500 file:text-primary-700 text-sm file:text-sm"
+              />
+            </div>
+
+            {error && <ErrorText message={error} />}
+
+            <SubmitButton
+              variant="primary"
+              submitting={loading}
+              onPress={handleImport}
+            >
+              Importar
+            </SubmitButton>
+          </CardContent>
+        </Card>
+
+        {result && (
+          <div className="space-y-3">
+            <div className="flex gap-3">
+              <Chip color="default" variant="soft">
+                Total: {result.totalFilas}
+              </Chip>
+              <Chip color="success" variant="soft">
+                Exitosas: {result.exitosas}
+              </Chip>
+              <Chip color="danger" variant="soft">
+                Fallidas: {result.fallidas}
+              </Chip>
+            </div>
+            {result.filasFallidas.length > 0 && (
+              <ImportErrorsGrid rows={result.filasFallidas} />
+            )}
           </div>
-
-          {error && <ErrorText message={error} />}
-
-          <SubmitButton
-            variant="primary"
-            submitting={loading}
-            onPress={handleImport}
-          >
-            Importar
-          </SubmitButton>
-        </CardContent>
-      </Card>
-
-      {result && (
-        <div className="space-y-3">
-          <div className="flex gap-3">
-            <Chip color="default" variant="soft">
-              Total: {result.totalFilas}
-            </Chip>
-            <Chip color="success" variant="soft">
-              Exitosas: {result.exitosas}
-            </Chip>
-            <Chip color="danger" variant="soft">
-              Fallidas: {result.fallidas}
-            </Chip>
-          </div>
-          {result.filasFallidas.length > 0 && (
-            <ImportErrorsGrid rows={result.filasFallidas} />
-          )}
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </SuperJuezGuard>
   );
 }

@@ -7,6 +7,7 @@ import CustomInput from "@/components/atoms/CustomInput";
 import { SubmitButton } from "@/components/atoms/SubmitButton";
 import { ErrorText } from "@/components/atoms/ErrorText";
 import { CustomSwitch } from "@/components/atoms/CustomSwitch";
+import { SuperJuezGuard } from "@/components/organisms/SuperJuezGuard";
 
 export default function ExportarPage() {
   const { torneoId } = useParams<{ torneoId: string }>();
@@ -45,40 +46,42 @@ export default function ExportarPage() {
   };
 
   return (
-    <Card>
-      <CardContent className="space-y-4 p-6 max-w-md">
-        <h2 className="font-semibold text-slate-700">
-          Exportar resultados (MDB)
-        </h2>
+    <SuperJuezGuard torneoId={torneoId}>
+      <Card>
+        <CardContent className="space-y-4 p-6 max-w-md">
+          <h2 className="font-semibold text-slate-700">
+            Exportar resultados (MDB)
+          </h2>
 
-        <CustomInput
-          label="ID personalizado (ej: VEN26-MZA)"
-          value={customId}
-          onValueChange={setCustomId}
-        />
-        <CustomInput
-          label="Alcance geográfico"
-          value={alcance}
-          onValueChange={setAlcance}
-        />
-        <CustomInput label="Nivel" value={nivel} onValueChange={setNivel} />
-        <CustomInput label="País" value={pais} onValueChange={setPais} />
+          <CustomInput
+            label="ID personalizado (ej: VEN26-MZA)"
+            value={customId}
+            onValueChange={setCustomId}
+          />
+          <CustomInput
+            label="Alcance geográfico"
+            value={alcance}
+            onValueChange={setAlcance}
+          />
+          <CustomInput label="Nivel" value={nivel} onValueChange={setNivel} />
+          <CustomInput label="País" value={pais} onValueChange={setPais} />
 
-        <CustomSwitch isSelected={soloCada} onChange={(v) => setSoloCada(v)}>
-          Solo federados (CADA)
-        </CustomSwitch>
+          <CustomSwitch isSelected={soloCada} onChange={(v) => setSoloCada(v)}>
+            Solo federados (CADA)
+          </CustomSwitch>
 
-        {error && <ErrorText message={error} />}
+          {error && <ErrorText message={error} />}
 
-        <SubmitButton
-          type="button"
-          variant="primary"
-          submitting={loading}
-          onPress={handleExport}
-        >
-          Descargar ZIP
-        </SubmitButton>
-      </CardContent>
-    </Card>
+          <SubmitButton
+            type="button"
+            variant="primary"
+            submitting={loading}
+            onPress={handleExport}
+          >
+            Descargar ZIP
+          </SubmitButton>
+        </CardContent>
+      </Card>
+    </SuperJuezGuard>
   );
 }

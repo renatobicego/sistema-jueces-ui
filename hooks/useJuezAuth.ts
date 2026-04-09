@@ -54,11 +54,36 @@ export function useJuezAuth() {
     }
   };
 
+  const loginPorDni = async (torneoId: string, dni: string, pin: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data } = await juecesApi.post(`/jueces/auth-dni/${torneoId}`, {
+        dni,
+        pin,
+      });
+      setJuezSession({
+        token: data.token,
+        juezId: data.juezId,
+        nombre: data.nombre,
+        torneoId: data.torneoId,
+        esSuperJuez: data.esSuperJuez,
+        pruebasAsignadas: data.pruebasAsignadas ?? [],
+      });
+      return data;
+    } catch (e: any) {
+      setError(e.response?.data?.error ?? "Error al autenticar.");
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Retrieve stored juezId for a given torneo (from localStorage)
   const getSavedJuezId = (torneoId: string): string =>
     typeof window !== "undefined"
       ? (localStorage.getItem(`juezId_${torneoId}`) ?? "")
       : "";
 
-  return { registrar, login, getSavedJuezId, loading, error };
+  return { registrar, login, loginPorDni, getSavedJuezId, loading, error };
 }
