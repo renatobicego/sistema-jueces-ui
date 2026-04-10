@@ -11,9 +11,9 @@ import {
   ModalBody,
   ModalFooter,
   useOverlayState,
+  toast,
 } from "@heroui/react";
 import { juecesApi } from "@/lib/axios";
-import { ErrorText } from "@/components/atoms/ErrorText";
 import CustomInput from "@/components/atoms/CustomInput";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
 import { SubmitButton } from "@/components/atoms/SubmitButton";
@@ -40,11 +40,9 @@ export default function RegistrarAtletaModal({
     fecha_nacimiento: "",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const handleBuscar = async () => {
     setLoading(true);
-    setError("");
     setFound(null);
     setNotFound(false);
     try {
@@ -57,7 +55,7 @@ export default function RegistrarAtletaModal({
         response?: { status?: number; data?: { error?: string } };
       };
       if (err.response?.status === 404) setNotFound(true);
-      else setError(err.response?.data?.error ?? "Error al buscar.");
+      else toast.danger(err.response?.data?.error ?? "Error al buscar.");
     } finally {
       setLoading(false);
     }
@@ -65,7 +63,6 @@ export default function RegistrarAtletaModal({
 
   const handleRegistrar = async () => {
     setLoading(true);
-    setError("");
     try {
       await juecesApi.post(`/jueces/torneo/${torneoId}/atleta/registrar`, {
         dni: dni.trim(),
@@ -80,7 +77,7 @@ export default function RegistrarAtletaModal({
       setNotFound(false);
     } catch (e: unknown) {
       const err = e as { response?: { data?: { error?: string } } };
-      setError(err.response?.data?.error ?? "Error al registrar.");
+      toast.danger(err.response?.data?.error ?? "Error al registrar.");
     } finally {
       setLoading(false);
     }
@@ -172,8 +169,6 @@ export default function RegistrarAtletaModal({
                   />
                 </>
               )}
-
-              {error && <ErrorText message={error} />}
             </ModalBody>
             <ModalFooter>
               <Button variant="ghost" onPress={state.close}>

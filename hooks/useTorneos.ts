@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import { toast } from "@heroui/react";
 import { amaApi } from "@/lib/axios";
 import type { Torneo } from "@/types";
 
@@ -9,7 +10,6 @@ const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 export function useTorneos() {
   const [torneos, setTorneos] = useState<Torneo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [soloActivos, setSoloActivos] = useState(true);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export function useTorneos() {
         const { data } = await amaApi.get("/torneo");
         setTorneos(data.torneos ?? data);
       } catch {
-        setError("No se pudieron cargar los torneos.");
+        toast.danger("No se pudieron cargar los torneos.");
       } finally {
         setLoading(false);
       }
@@ -39,7 +39,6 @@ export function useTorneos() {
     torneos: filtered,
     allTorneos: torneos,
     loading,
-    error,
     soloActivos,
     setSoloActivos,
   };

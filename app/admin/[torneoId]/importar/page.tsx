@@ -1,12 +1,11 @@
 "use client";
 import { useState, useRef } from "react";
 import { useParams } from "next/navigation";
-import { Chip, Card, CardContent } from "@heroui/react";
+import { Chip, Card, CardContent, toast } from "@heroui/react";
 import { juecesApi } from "@/lib/axios";
 import ImportErrorsGrid from "@/components/organisms/ImportErrorsGrid";
 import { SubmitButton } from "@/components/atoms/SubmitButton";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
-import { ErrorText } from "@/components/atoms/ErrorText";
 import { SuperJuezGuard } from "@/components/organisms/SuperJuezGuard";
 
 interface FilaFallida {
@@ -30,17 +29,15 @@ export default function ImportarPage() {
   const [tipo, setTipo] = useState<"cada" | "libre">("cada");
   const [result, setResult] = useState<ImportResult | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleImport = async () => {
     const file = fileRef.current?.files?.[0];
     if (!file) {
-      setError("Seleccioná un archivo.");
+      toast.warning("Seleccioná un archivo.");
       return;
     }
     setLoading(true);
-    setError("");
     try {
       const form = new FormData();
       form.append("archivo", file);
@@ -50,9 +47,12 @@ export default function ImportarPage() {
         { headers: { "Content-Type": "multipart/form-data" } },
       );
       setResult(data);
+      toast.success(
+        `Importación completada: ${data.exitosas} exitosas, ${data.fallidas} fallidas.`,
+      );
     } catch (e: unknown) {
       const err = e as { response?: { data?: { error?: string } } };
-      setError(err.response?.data?.error ?? "Error al importar.");
+      toast.danger(err.response?.data?.error ?? "Error al importar.");
     } finally {
       setLoading(false);
     }
@@ -88,8 +88,6 @@ export default function ImportarPage() {
                 className="block hover:file:bg-primary-100 file:bg-primary-50 file:mr-4 file:px-4 file:py-2 file:border-0 file:rounded w-full file:font-medium text-slate-500 file:text-primary-700 text-sm file:text-sm"
               />
             </div>
-
-            {error && <ErrorText message={error} />}
 
             <SubmitButton
               variant="primary"
