@@ -141,3 +141,82 @@ export interface AccesoJuez {
   esSuperJuez: boolean;
   pruebasAsignadas: string[];
 }
+
+// ── UI / Component types ──────────────────────────────────────────────────────
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SelectItem<K = any> = {
+  key: string;
+  label: string;
+  value: K;
+};
+
+export interface FilaFallida {
+  fila: number;
+  dni: string;
+  nombre: string;
+  prueba: string;
+  categoria: string;
+  motivo: string;
+}
+
+// Row shape used inside ResultadosGrid
+export interface GridRow extends AtletaEntry {
+  _marca: string;
+  _viento: string;
+  _observacion: string;
+  _dirty: boolean;
+  _manualFinalMark?: boolean;
+}
+
+// ── Component prop types ──────────────────────────────────────────────────────
+
+export interface VientoInputProps {
+  value: string;
+  onChange: (v: string) => void;
+  label?: string;
+  className?: string;
+}
+
+export interface TorneoSelectorProps {
+  torneos: Torneo[];
+  loading: boolean;
+  selected: Torneo | null;
+  onSelect: (t: Torneo) => void;
+  soloActivos: boolean;
+  onToggleActivos: (v: boolean) => void;
+}
+
+export interface JuecesGridProps {
+  jueces: AccesoJuez[];
+  pruebas: Prueba[];
+  onAprobar: (
+    juezId: string,
+    aprobado: boolean,
+    pruebasAsignadas: string[],
+  ) => Promise<void>;
+  onEliminar: (juezId: string) => Promise<void>;
+}
+
+export interface RegistrarAtletaModalProps {
+  torneoId: string;
+  pruebaId: string;
+  categoriaId: string;
+  onSuccess: () => void;
+}
+
+export interface ResultadosGridProps {
+  atletas: AtletaEntry[];
+  config: ConfigPrueba | null;
+  resultadoId: string | null;
+  torneoId: string;
+  pruebaId: string;
+  categoriaId: string;
+  sexo: "M" | "F";
+  onSaved: () => void;
+}
+
+export interface SuperJuezGuardProps {
+  torneoId: string;
+  children: React.ReactNode;
+}

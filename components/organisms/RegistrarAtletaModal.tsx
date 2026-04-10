@@ -17,20 +17,14 @@ import { ErrorText } from "@/components/atoms/ErrorText";
 import CustomInput from "@/components/atoms/CustomInput";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
 import { SubmitButton } from "@/components/atoms/SubmitButton";
-
-interface Props {
-  torneoId: string;
-  pruebaId: string;
-  categoriaId: string;
-  onSuccess: () => void;
-}
+import type { RegistrarAtletaModalProps } from "@/types";
 
 export default function RegistrarAtletaModal({
   torneoId,
   pruebaId,
   categoriaId,
   onSuccess,
-}: Props) {
+}: RegistrarAtletaModalProps) {
   const state = useOverlayState();
   const [dni, setDni] = useState("");
   const [found, setFound] = useState<{

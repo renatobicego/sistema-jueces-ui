@@ -1,17 +1,8 @@
 "use client";
-import type { Torneo } from "@/types";
+import type { TorneoSelectorProps } from "@/types";
 import { LoadingCenter } from "@/components/atoms/LoadingCenter";
 import { CustomCheckbox } from "@/components/atoms/CustomCheckbox";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
-
-interface Props {
-  torneos: Torneo[];
-  loading: boolean;
-  selected: Torneo | null;
-  onSelect: (t: Torneo) => void;
-  soloActivos: boolean;
-  onToggleActivos: (v: boolean) => void;
-}
 
 export default function TorneoSelector({
   torneos,
@@ -20,7 +11,7 @@ export default function TorneoSelector({
   onSelect,
   soloActivos,
   onToggleActivos,
-}: Props) {
+}: TorneoSelectorProps) {
   if (loading) return <LoadingCenter />;
 
   const items = torneos.map((t) => ({ key: t._id, label: t.nombre, value: t }));

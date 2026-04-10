@@ -4,35 +4,25 @@ import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import { Button, Chip } from "@heroui/react";
 import type { ColDef, ICellRendererParams } from "ag-grid-community";
-import type { AccesoJuez, Prueba } from "@/types";
+import type { AccesoJuez, JuecesGridProps } from "@/types";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
+import { getAssignedPruebas } from "@/lib/utils/grid";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-
-interface Props {
-  jueces: AccesoJuez[];
-  pruebas: Prueba[];
-  onAprobar: (
-    juezId: string,
-    aprobado: boolean,
-    pruebasAsignadas: string[],
-  ) => Promise<void>;
-  onEliminar: (juezId: string) => Promise<void>;
-}
 
 export default function JuecesGrid({
   jueces,
   pruebas,
   onAprobar,
   onEliminar,
-}: Props) {
+}: JuecesGridProps) {
   const [pendingAssignments, setPendingAssignments] = useState<
     Record<string, string[]>
   >({});
 
   const colDefs = useMemo<ColDef<AccesoJuez>[]>(() => {
     const getAssign = (juezId: string, current: string[]) =>
-      pendingAssignments[juezId] ?? current;
+      getAssignedPruebas(pendingAssignments, juezId, current);
     return [
       {
         field: "nombre",

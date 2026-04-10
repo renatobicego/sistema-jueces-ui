@@ -6,13 +6,9 @@ import { useJuezAuth } from "@/hooks/useJuezAuth";
 import CustomInput from "@/components/atoms/CustomInput";
 import { SubmitButton } from "@/components/atoms/SubmitButton";
 import { ErrorText } from "@/components/atoms/ErrorText";
+import type { SuperJuezGuardProps } from "@/types";
 
-interface Props {
-  torneoId: string;
-  children: React.ReactNode;
-}
-
-export function SuperJuezGuard({ torneoId, children }: Props) {
+export function SuperJuezGuard({ torneoId, children }: SuperJuezGuardProps) {
   const juezSession = useAuthStore((s) => s.juezSession);
   const { loginPorDni, loading, error } = useJuezAuth();
 

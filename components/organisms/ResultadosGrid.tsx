@@ -23,46 +23,16 @@ import MarcaVientoCellEditor, {
 import MarcaVientoCellRenderer from "@/components/atoms/MarcaVientoCellRenderer";
 import { useAuthStore } from "@/store/authStore";
 import type {
-  AtletaEntry,
-  ConfigPrueba,
+  GridRow,
   IntentoAltura,
+  ResultadosGridProps,
   TipoMarca,
 } from "@/types";
+import { toGridRow } from "@/lib/utils/grid";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 const OBSERVACIONES = ["DNS", "DNF", "NM", "DQ"];
-
-interface Props {
-  atletas: AtletaEntry[];
-  config: ConfigPrueba | null;
-  resultadoId: string | null;
-  torneoId: string;
-  pruebaId: string;
-  categoriaId: string;
-  sexo: "M" | "F";
-  onSaved: () => void;
-}
-
-// Row shape used inside the grid
-interface GridRow extends AtletaEntry {
-  _marca: string;
-  _viento: string;
-  _observacion: string;
-  _dirty: boolean;
-  _manualFinalMark?: boolean;
-}
-
-function toGridRow(e: AtletaEntry): GridRow {
-  const ra = e.resultadoAtleta;
-  return {
-    ...e,
-    _marca: ra?.marca ?? "",
-    _viento: ra?.viento ?? "",
-    _observacion: ra?.observacion ?? "",
-    _dirty: false,
-  };
-}
 
 export default function ResultadosGrid({
   atletas,
@@ -73,7 +43,7 @@ export default function ResultadosGrid({
   categoriaId,
   sexo,
   onSaved,
-}: Props) {
+}: ResultadosGridProps) {
   const gridRef = useRef<AgGridReact<GridRow>>(null);
   const [vientoGlobal, setVientoGlobal] = useState("+0.0");
   const [saving, setSaving] = useState(false);

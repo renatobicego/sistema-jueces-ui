@@ -5,17 +5,9 @@ import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import type { ColDef } from "ag-grid-community";
 import * as XLSX from "xlsx";
 import { Button } from "@heroui/react";
+import type { FilaFallida } from "@/types";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
-
-interface FilaFallida {
-  fila: number;
-  dni: string;
-  nombre: string;
-  prueba: string;
-  categoria: string;
-  motivo: string;
-}
 
 export default function ImportErrorsGrid({ rows }: { rows: FilaFallida[] }) {
   const colDefs = useMemo<ColDef<FilaFallida>[]>(

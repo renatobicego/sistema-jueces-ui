@@ -10,12 +10,9 @@ import {
   ListBoxItem,
   Label,
 } from "@heroui/react";
+import type { SelectItem } from "@/types";
 
-export type SelectItem<K> = {
-  key: string;
-  label: string;
-  value: K;
-};
+export type { SelectItem };
 
 type CustomSelectProps<K> = {
   label?: string;

@@ -2,20 +2,14 @@
 import { useId } from "react";
 import { Label } from "@heroui/react";
 import { formatVientoInput, isVientoValid } from "@/lib/utils/viento";
-
-interface Props {
-  value: string;
-  onChange: (v: string) => void;
-  label?: string;
-  className?: string;
-}
+import type { VientoInputProps } from "@/types";
 
 export function VientoInput({
   value,
   onChange,
   label = "Viento",
   className,
-}: Props) {
+}: VientoInputProps) {
   const id = useId();
   const isValid = isVientoValid(value);
   const showError = value.length === 4 && !isValid;
