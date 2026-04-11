@@ -10,6 +10,7 @@ export function toGridRow(e: AtletaEntry): GridRow {
     _marca: ra?.marca ?? "",
     _viento: ra?.viento ?? "",
     _observacion: ra?.observacion ?? "",
+    _puesto: ra?.puesto ?? undefined,
     _dirty: false,
   };
 }

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import AdminNav from "@/components/organisms/AdminNav";
+import Providers from "../providers";
 
 export default function AdminLayout({
   children,
@@ -31,6 +32,7 @@ export default function AdminLayout({
 
   return (
     <div className="bg-slate-50 min-h-screen">
+      <Providers />
       <AdminNav user={amaUser} />
       <main className="mx-auto px-4 py-6 max-w-7xl">{children}</main>
     </div>

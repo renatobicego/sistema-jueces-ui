@@ -90,104 +90,107 @@ export default function RegistrarAtletaModal({
       </Button>
 
       <Modal state={state}>
-        <ModalBackdrop isDismissable />
-        <ModalContainer size="md">
-          <ModalDialog>
-            <ModalHeader>
-              <ModalHeading>Registrar atleta en esta prueba</ModalHeading>
-            </ModalHeader>
-            <ModalBody className="space-y-4">
-              <div className="flex gap-2">
-                <CustomInput
-                  label="DNI"
-                  value={dni}
-                  onValueChange={setDni}
-                  placeholder="12345678"
-                  className="flex-1"
-                />
-                <SubmitButton
-                  type="button"
-                  variant="secondary"
-                  submitting={loading}
-                  fullWidth={false}
-                  onPress={handleBuscar}
-                  className="self-end"
-                >
-                  Buscar
-                </SubmitButton>
-              </div>
-
-              {found && (
-                <div className="bg-success-50 p-3 rounded text-sm">
-                  <p className="font-medium text-success-700">
-                    {found.nombre_apellido}
-                  </p>
-                  <p className="text-success-600">
-                    {found.pais} — {found.sexo}
-                  </p>
+        <ModalBackdrop isDismissable>
+          <ModalContainer size="md">
+            <ModalDialog>
+              <ModalHeader>
+                <ModalHeading>Registrar atleta en esta prueba</ModalHeading>
+              </ModalHeader>
+              <ModalBody className="space-y-4">
+                <div className="flex gap-2">
+                  <CustomInput
+                    label="DNI"
+                    value={dni}
+                    onValueChange={setDni}
+                    placeholder="12345678"
+                    className="flex-1"
+                  />
+                  <SubmitButton
+                    type="button"
+                    variant="secondary"
+                    submitting={loading}
+                    fullWidth={false}
+                    onPress={handleBuscar}
+                    className="self-end"
+                  >
+                    Buscar
+                  </SubmitButton>
                 </div>
-              )}
 
-              {notFound && (
-                <>
-                  <hr className="border-slate-200" />
-                  <p className="text-slate-500 text-sm">
-                    Atleta no encontrado. Completá los datos:
-                  </p>
-                  <CustomInput
-                    label="Nombre y apellido"
-                    value={form.nombre_apellido}
-                    onValueChange={(v) =>
-                      setForm((f) => ({ ...f, nombre_apellido: v }))
-                    }
-                    required
-                  />
-                  <div className="gap-3 grid grid-cols-2">
-                    <CustomSelect
-                      label="Sexo"
-                      value={form.sexo}
-                      onChange={(v) => setForm((f) => ({ ...f, sexo: v }))}
-                      items={[
-                        { key: "M", label: "Masculino", value: "M" },
-                        { key: "F", label: "Femenino", value: "F" },
-                      ]}
-                    />
-                    <CustomInput
-                      label="País"
-                      value={form.pais}
-                      onValueChange={(v) => setForm((f) => ({ ...f, pais: v }))}
-                    />
+                {found && (
+                  <div className="bg-success-50 p-3 rounded text-sm">
+                    <p className="font-medium text-success-700">
+                      {found.nombre_apellido}
+                    </p>
+                    <p className="text-success-600">
+                      {found.pais} — {found.sexo}
+                    </p>
                   </div>
-                  <CustomInput
-                    label="Fecha de nacimiento"
-                    type="date"
-                    value={form.fecha_nacimiento}
-                    onValueChange={(v) =>
-                      setForm((f) => ({ ...f, fecha_nacimiento: v }))
-                    }
-                    required
-                  />
-                </>
-              )}
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" onPress={state.close}>
-                Cancelar
-              </Button>
-              {(found || notFound) && (
-                <SubmitButton
-                  type="button"
-                  variant="primary"
-                  submitting={loading}
-                  fullWidth={false}
-                  onPress={handleRegistrar}
-                >
-                  Inscribir en esta prueba
-                </SubmitButton>
-              )}
-            </ModalFooter>
-          </ModalDialog>
-        </ModalContainer>
+                )}
+
+                {notFound && (
+                  <>
+                    <hr className="border-slate-200" />
+                    <p className="text-slate-500 text-sm">
+                      Atleta no encontrado. Completá los datos:
+                    </p>
+                    <CustomInput
+                      label="Nombre y apellido"
+                      value={form.nombre_apellido}
+                      onValueChange={(v) =>
+                        setForm((f) => ({ ...f, nombre_apellido: v }))
+                      }
+                      required
+                    />
+                    <div className="gap-3 grid grid-cols-2">
+                      <CustomSelect
+                        label="Sexo"
+                        value={form.sexo}
+                        onChange={(v) => setForm((f) => ({ ...f, sexo: v }))}
+                        items={[
+                          { key: "M", label: "Masculino", value: "M" },
+                          { key: "F", label: "Femenino", value: "F" },
+                        ]}
+                      />
+                      <CustomInput
+                        label="País"
+                        value={form.pais}
+                        onValueChange={(v) =>
+                          setForm((f) => ({ ...f, pais: v }))
+                        }
+                      />
+                    </div>
+                    <CustomInput
+                      label="Fecha de nacimiento"
+                      type="date"
+                      value={form.fecha_nacimiento}
+                      onValueChange={(v) =>
+                        setForm((f) => ({ ...f, fecha_nacimiento: v }))
+                      }
+                      required
+                    />
+                  </>
+                )}
+              </ModalBody>
+              <ModalFooter>
+                <Button variant="ghost" onPress={state.close}>
+                  Cancelar
+                </Button>
+                {(found || notFound) && (
+                  <SubmitButton
+                    type="button"
+                    variant="primary"
+                    submitting={loading}
+                    fullWidth={false}
+                    onPress={handleRegistrar}
+                  >
+                    Inscribir en esta prueba
+                  </SubmitButton>
+                )}
+              </ModalFooter>
+            </ModalDialog>
+          </ModalContainer>
+        </ModalBackdrop>
       </Modal>
     </>
   );

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Toast } from "@heroui/react";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,7 +14,6 @@ export default function RootLayout({
   return (
     <html lang="es" className="light">
       <body className="bg-background min-h-screen font-sans antialiased">
-        <Toast.Provider placement="bottom end" />
         {children}
       </body>
     </html>

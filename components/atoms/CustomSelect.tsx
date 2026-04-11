@@ -37,13 +37,15 @@ export function CustomSelect<K>({
 
   return (
     <div className={className}>
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={label}>{label}</Label>}
       <Select
-        selectedKey={selectedKey}
-        onSelectionChange={(key) => {
+        value={selectedKey}
+        onChange={(key) => {
           const selected = items.find((item) => item.key === key);
           if (selected) onChange?.(selected.value);
         }}
+        id={label}
+        aria-label={label}
         placeholder={placeholder}
       >
         <SelectTrigger>

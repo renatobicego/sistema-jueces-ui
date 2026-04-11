@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "@heroui/react";
 import { juecesApi } from "@/lib/axios";
 import { useAuthStore } from "@/store/authStore";
+import { AxiosError } from "axios";
 
 export function useJuezAuth() {
   const [loading, setLoading] = useState(false);
@@ -20,8 +21,10 @@ export function useJuezAuth() {
         aprobado: boolean;
         message: string;
       };
-    } catch (e: any) {
-      toast.danger(e.response?.data?.error ?? "Error al registrarse.");
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        toast.danger(e.response?.data?.error ?? "Error al registrarse.");
+      }
       return null;
     } finally {
       setLoading(false);
@@ -44,8 +47,10 @@ export function useJuezAuth() {
         pruebasAsignadas: data.pruebasAsignadas ?? [],
       });
       return data;
-    } catch (e: any) {
-      toast.danger(e.response?.data?.error ?? "Error al autenticar.");
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        toast.danger(e.response?.data?.error ?? "Error al autenticar.");
+      }
       return null;
     } finally {
       setLoading(false);
@@ -68,8 +73,10 @@ export function useJuezAuth() {
         pruebasAsignadas: data.pruebasAsignadas ?? [],
       });
       return data;
-    } catch (e: any) {
-      toast.danger(e.response?.data?.error ?? "Error al autenticar.");
+    } catch (e) {
+      if (e instanceof AxiosError) {
+        toast.danger(e.response?.data?.error ?? "Error al autenticar.");
+      }
       return null;
     } finally {
       setLoading(false);

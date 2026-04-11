@@ -5,11 +5,10 @@ import { useTorneos } from "@/hooks/useTorneos";
 import type { Torneo } from "@/types";
 import { PressableCard } from "@/components/atoms/PressableCard";
 import { LoadingCenter } from "@/components/atoms/LoadingCenter";
-import { ErrorText } from "@/components/atoms/ErrorText";
 
 export default function AdminTorneosPage() {
   const router = useRouter();
-  const { torneos, loading, error, soloActivos, setSoloActivos } = useTorneos();
+  const { torneos, loading, soloActivos, setSoloActivos } = useTorneos();
 
   const handleSelect = (t: Torneo) => {
     router.push(`/admin/${t._id}/jueces`);
@@ -31,7 +30,6 @@ export default function AdminTorneosPage() {
       </div>
 
       {loading && <LoadingCenter />}
-      {error && <ErrorText message={error} />}
       {!loading && !torneos.length && (
         <Alert>
           <Alert.Indicator />

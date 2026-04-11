@@ -81,6 +81,17 @@ export function formatMarcaInput(
   return result;
 }
 
+export const MARCA_FORMAT_HINT: Record<TipoMarca, string> = {
+  SPRINT: "DD.DD — ej: 10.45",
+  DISTANCIA: "DD.DD — ej: 10.45",
+  LARGO: "D.DD — ej: 7.85",
+  ALTURA: "D.DD — ej: 2.10",
+  MEDIO_FONDO: "D.DD.DD — ej: 3.45.67",
+  FONDO: "DD.DD.DD — ej: 14.23.45",
+  MARCHA: "DD.DD.DD — ej: 20.15.30",
+  PUNTOS: "hasta 5 dígitos — ej: 8500",
+};
+
 export function isMarcaValid(v: string, tipo: TipoMarca): boolean {
   if (!v) return false;
   if (v === "N" || v === "-") return true;

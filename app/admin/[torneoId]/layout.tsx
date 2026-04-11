@@ -1,4 +1,5 @@
 "use client";
+import Providers from "@/app/providers";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 
@@ -20,6 +21,7 @@ export default function TorneoAdminLayout({
 
   return (
     <div className="space-y-4">
+      <Providers />
       <div className="flex justify-between items-center border-slate-200 border-b">
         <div className="flex">
           {TABS.map((t) => (

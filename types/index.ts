@@ -100,6 +100,8 @@ export interface IntentoAltura {
 export interface ResultadoAtleta {
   _id: string;
   marca: string | null;
+  marcaParcial: string | null;
+  puesto: number | null;
   viento: string | null;
   observacion: "DNS" | "DNF" | "NM" | "DQ" | null;
   intentosSerie: IntentoSerie[];
@@ -167,6 +169,7 @@ export interface GridRow extends AtletaEntry {
   _observacion: string;
   _dirty: boolean;
   _manualFinalMark?: boolean;
+  _puesto?: number;
 }
 
 // ── Component prop types ──────────────────────────────────────────────────────
@@ -213,7 +216,7 @@ export interface ResultadosGridProps {
   pruebaId: string;
   categoriaId: string;
   sexo: "M" | "F";
-  onSaved: () => void;
+  onSaved: () => Promise<void>;
 }
 
 export interface SuperJuezGuardProps {

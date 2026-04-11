@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 import JuezNav from "@/components/organisms/JuezNav";
+import Providers from "../providers";
 
 export default function JuezLayout({
   children,
@@ -33,6 +34,7 @@ export default function JuezLayout({
 
   return (
     <div className="bg-slate-50 min-h-screen">
+      <Providers />
       {juezSession && <JuezNav />}
       <main className="mx-auto px-4 py-6 max-w-7xl">{children}</main>
     </div>

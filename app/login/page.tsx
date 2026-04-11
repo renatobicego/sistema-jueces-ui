@@ -5,12 +5,12 @@ import { Card, CardContent } from "@heroui/react";
 import { useAmaAuth } from "@/hooks/useAmaAuth";
 import CustomInput from "@/components/atoms/CustomInput";
 import { SubmitButton } from "@/components/atoms/SubmitButton";
-import { ErrorText } from "@/components/atoms/ErrorText";
+import Providers from "../providers";
 
 export default function LoginPage() {
   const [dni, setDni] = useState("");
   const [password, setPassword] = useState("");
-  const { login, loading, error } = useAmaAuth();
+  const { login, loading } = useAmaAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,6 +21,7 @@ export default function LoginPage() {
 
   return (
     <main className="flex justify-center items-center bg-linear-to-br from-blue-50 to-slate-100 p-4 min-h-screen">
+      <Providers />
       <Card className="w-full max-w-sm">
         <CardContent className="space-y-6 p-8">
           <div className="text-center">
@@ -51,7 +52,6 @@ export default function LoginPage() {
               required
               fullWidth
             />
-            {error && <ErrorText message={error} />}
             <SubmitButton variant="primary" submitting={loading}>
               Continuar
             </SubmitButton>

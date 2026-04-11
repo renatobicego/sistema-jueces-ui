@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { Tabs, TabList, Tab, TabPanel } from "@heroui/react";
 import { usePruebas } from "@/hooks/usePruebas";
 import { useEventoAtletas } from "@/hooks/useEventoAtletas";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
