@@ -1,4 +1,8 @@
-import type { ColDef, ICellRendererParams } from "ag-grid-community";
+import type {
+  CellClickedEvent,
+  ColDef,
+  ICellRendererParams,
+} from "ag-grid-community";
 import { Button, Chip } from "@heroui/react";
 import type { AccesoJuez, JuecesGridProps, Prueba } from "@/types";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
@@ -26,6 +30,15 @@ export function buildJuecesColDefs(
       flex: 2,
       sortable: true,
       filter: true,
+    },
+    {
+      field: "_id",
+      headerName: "Id",
+      flex: 2,
+      sortable: true,
+      filter: true,
+      onCellClicked: (params: CellClickedEvent<AccesoJuez>) =>
+        navigator.clipboard.writeText(params.value),
     },
     {
       headerName: "Estado",

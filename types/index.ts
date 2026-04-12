@@ -217,9 +217,48 @@ export interface ResultadosGridProps {
   categoriaId: string;
   sexo: "M" | "F";
   onSaved: () => Promise<void>;
+  serie: string;
 }
 
 export interface SuperJuezGuardProps {
   torneoId: string;
   children: React.ReactNode;
+}
+
+// ── Heats/Rounds Management ───────────────────────────────────────────────────
+
+export interface HeatInfo {
+  name: string;
+  athleteCount: number;
+}
+
+export interface AthleteForProgression {
+  pruebaAtletaId: string;
+  atletaId: string;
+  nombre: string;
+  numero: number;
+  sourceHeat: string;
+  puesto: number | null;
+  marca: string | null;
+}
+
+export interface CreateHeatsRequest {
+  torneoId: string;
+  pruebaId: string;
+  categoriaId: string;
+  sexo: "M" | "F";
+  heatType: "series" | "semifinal" | "final";
+  athletesPerSeries?: number;
+  heats?: Array<{
+    name: string;
+    athleteIds: string[];
+  }>;
+  sourceHeats?: string[];
+}
+
+export interface CreateHeatsResponse {
+  success: boolean;
+  heatsCreated: string[];
+  athletesMoved: number;
+  errors?: string[];
 }

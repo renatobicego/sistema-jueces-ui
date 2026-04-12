@@ -1,13 +1,17 @@
 "use client";
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import { Button } from "@heroui/react";
 import { usePruebas } from "@/hooks/usePruebas";
 import { useEventoAtletas } from "@/hooks/useEventoAtletas";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
+import { HeatSelector } from "@/components/atoms/HeatSelector";
 import ResultadosGrid from "@/components/organisms/ResultadosGrid";
 import RegistrarAtletaModal from "@/components/organisms/RegistrarAtletaModal";
+import HeatManagementModal from "@/components/organisms/HeatManagementModal";
 import { LoadingCenter } from "@/components/atoms/LoadingCenter";
 import { ErrorText } from "@/components/atoms/ErrorText";
+import { useAuthStore } from "@/store/authStore";
 import type { Prueba, Categoria } from "@/types";
 
 const SEXO_OPTIONS = [
@@ -18,12 +22,15 @@ const SEXO_OPTIONS = [
 export default function PruebasPage() {
   const { torneoId } = useParams<{ torneoId: string }>();
   const { pruebas, loading, error } = usePruebas(torneoId);
+  const esSuperJuez = useAuthStore((s) => s.juezSession?.esSuperJuez ?? false);
 
   const [selectedPrueba, setSelectedPrueba] = useState<Prueba | null>(null);
   const [selectedCategoria, setSelectedCategoria] = useState<Categoria | null>(
     null,
   );
   const [selectedSexo, setSelectedSexo] = useState<"M" | "F" | null>(null);
+  const [selectedHeat, setSelectedHeat] = useState<string>("Final_A");
+  const [showHeatManagementModal, setShowHeatManagementModal] = useState(false);
 
   const canFetch = !!(selectedPrueba && selectedCategoria && selectedSexo);
 
@@ -36,6 +43,7 @@ export default function PruebasPage() {
     torneoId,
     selectedCategoria?._id ?? "",
     selectedPrueba?._id ?? "",
+    selectedHeat,
   );
 
   const pruebaOptions = pruebas.map((p) => ({
@@ -53,6 +61,20 @@ export default function PruebasPage() {
   const handlePruebaChange = (p: Prueba) => {
     setSelectedPrueba(p);
     setSelectedCategoria(null);
+    setSelectedHeat("Final_A"); // Reset heat when prueba changes
+  };
+
+  const handleHeatChange = (heat: string) => {
+    setSelectedHeat(heat);
+  };
+
+  const handleManageHeatsClick = () => {
+    setShowHeatManagementModal(true);
+  };
+
+  const handleHeatManagementSuccess = () => {
+    setShowHeatManagementModal(false);
+    reload(); // Refresh data after successful heat creation
   };
 
   if (loading) return <LoadingCenter />;
@@ -99,13 +121,33 @@ export default function PruebasPage() {
                   {selectedPrueba.nombre} — {selectedCategoria!.nombre} —{" "}
                   {selectedSexo === "M" ? "Masculino" : "Femenino"}
                 </p>
-                <RegistrarAtletaModal
-                  torneoId={torneoId}
-                  pruebaId={selectedPrueba._id}
-                  categoriaId={selectedCategoria!._id}
-                  onSuccess={reload}
-                />
+                <div className="flex items-center gap-3">
+                  <RegistrarAtletaModal
+                    torneoId={torneoId}
+                    pruebaId={selectedPrueba._id}
+                    categoriaId={selectedCategoria!._id}
+                    onSuccess={reload}
+                  />
+                  {esSuperJuez && (
+                    <Button
+                      variant="secondary"
+                      onPress={handleManageHeatsClick}
+                    >
+                      Gestionar Series
+                    </Button>
+                  )}
+                </div>
               </div>
+
+              {/* Heat Selector */}
+              <HeatSelector
+                torneoId={torneoId}
+                pruebaId={selectedPrueba._id}
+                categoriaId={selectedCategoria!._id}
+                selectedHeat={selectedHeat}
+                onHeatChange={handleHeatChange}
+              />
+
               <ResultadosGrid
                 atletas={sexoData?.atletas ?? []}
                 config={data.config}
@@ -115,11 +157,30 @@ export default function PruebasPage() {
                 categoriaId={selectedCategoria!._id}
                 sexo={selectedSexo}
                 onSaved={reload}
+                serie={selectedHeat}
               />
             </div>
           )}
         </>
       )}
+
+      {/* Heat Management Modal */}
+      {showHeatManagementModal &&
+        selectedPrueba &&
+        selectedCategoria &&
+        selectedSexo && (
+          <HeatManagementModal
+            torneoId={torneoId}
+            pruebaId={selectedPrueba._id}
+            categoriaId={selectedCategoria._id}
+            sexo={selectedSexo}
+            currentHeat={selectedHeat}
+            config={data?.config ?? null}
+            athletes={data}
+            onClose={() => setShowHeatManagementModal(false)}
+            onSuccess={handleHeatManagementSuccess}
+          />
+        )}
     </div>
   );
 }

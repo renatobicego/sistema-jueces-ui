@@ -7,6 +7,7 @@ import type { AmaUser } from "@/types";
 
 export function useAmaAuth() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const setAmaAuth = useAuthStore((s) => s.setAmaAuth);
 
   const login = async (
@@ -14,6 +15,7 @@ export function useAmaAuth() {
     password?: string,
   ): Promise<AmaUser | null> => {
     setLoading(true);
+    setError(null);
     try {
       const { data } = await amaApi.post("/auth/login", {
         dni,
@@ -29,7 +31,9 @@ export function useAmaAuth() {
       };
 
       if (user.role !== "ADMIN_ROLE" && !user.isEditor) {
-        toast.danger("No tenés permisos para acceder al sistema de jueces.");
+        const errorMsg = "No tenés permisos para acceder al sistema de jueces.";
+        setError(errorMsg);
+        toast.danger(errorMsg);
         return null;
       }
 
@@ -37,12 +41,14 @@ export function useAmaAuth() {
       return user;
     } catch (e: unknown) {
       const err = e as { response?: { data?: { msg?: string } } };
-      toast.danger(err.response?.data?.msg ?? "Error al iniciar sesión.");
+      const errorMsg = err.response?.data?.msg ?? "Error al iniciar sesión.";
+      setError(errorMsg);
+      toast.danger(errorMsg);
       return null;
     } finally {
       setLoading(false);
     }
   };
 
-  return { login, loading };
+  return { login, loading, error };
 }

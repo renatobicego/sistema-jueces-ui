@@ -10,16 +10,20 @@ const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 export function useTorneos() {
   const [torneos, setTorneos] = useState<Torneo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [soloActivos, setSoloActivos] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
       setLoading(true);
+      setError(null);
       try {
         const { data } = await amaApi.get("/torneo");
         setTorneos(data.torneos ?? data);
       } catch {
-        toast.danger("No se pudieron cargar los torneos.");
+        const errorMsg = "No se pudieron cargar los torneos.";
+        setError(errorMsg);
+        toast.danger(errorMsg);
       } finally {
         setLoading(false);
       }
@@ -39,6 +43,7 @@ export function useTorneos() {
     torneos: filtered,
     allTorneos: torneos,
     loading,
+    error,
     soloActivos,
     setSoloActivos,
   };

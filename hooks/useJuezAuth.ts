@@ -7,10 +7,12 @@ import { AxiosError } from "axios";
 
 export function useJuezAuth() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const setJuezSession = useAuthStore((s) => s.setJuezSession);
 
   const registrar = async (torneoId: string, nombre: string) => {
     setLoading(true);
+    setError(null);
     try {
       const { data } = await juecesApi.post(`/jueces/registrar/${torneoId}`, {
         nombre,
@@ -23,7 +25,9 @@ export function useJuezAuth() {
       };
     } catch (e) {
       if (e instanceof AxiosError) {
-        toast.danger(e.response?.data?.error ?? "Error al registrarse.");
+        const errorMsg = e.response?.data?.error ?? "Error al registrarse.";
+        setError(errorMsg);
+        toast.danger(errorMsg);
       }
       return null;
     } finally {
@@ -33,6 +37,7 @@ export function useJuezAuth() {
 
   const login = async (torneoId: string, juezId: string, pin: string) => {
     setLoading(true);
+    setError(null);
     try {
       const { data } = await juecesApi.post(`/jueces/auth/${torneoId}`, {
         juezId,
@@ -49,7 +54,9 @@ export function useJuezAuth() {
       return data;
     } catch (e) {
       if (e instanceof AxiosError) {
-        toast.danger(e.response?.data?.error ?? "Error al autenticar.");
+        const errorMsg = e.response?.data?.error ?? "Error al autenticar.";
+        setError(errorMsg);
+        toast.danger(errorMsg);
       }
       return null;
     } finally {
@@ -59,6 +66,7 @@ export function useJuezAuth() {
 
   const loginPorDni = async (torneoId: string, dni: string, pin: string) => {
     setLoading(true);
+    setError(null);
     try {
       const { data } = await juecesApi.post(`/jueces/auth-dni/${torneoId}`, {
         dni,
@@ -75,7 +83,9 @@ export function useJuezAuth() {
       return data;
     } catch (e) {
       if (e instanceof AxiosError) {
-        toast.danger(e.response?.data?.error ?? "Error al autenticar.");
+        const errorMsg = e.response?.data?.error ?? "Error al autenticar.";
+        setError(errorMsg);
+        toast.danger(errorMsg);
       }
       return null;
     } finally {
@@ -88,5 +98,5 @@ export function useJuezAuth() {
       ? (localStorage.getItem(`juezId_${torneoId}`) ?? "")
       : "";
 
-  return { registrar, login, loginPorDni, getSavedJuezId, loading };
+  return { registrar, login, loginPorDni, getSavedJuezId, loading, error };
 }

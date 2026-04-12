@@ -29,6 +29,7 @@ export default function ResultadosGrid({
   categoriaId,
   sexo,
   onSaved,
+  serie,
 }: ResultadosGridProps) {
   const gridRef = useRef<AgGridReact<GridRow>>(null);
   const [vientoGlobal, setVientoGlobal] = useState("+0.0");
@@ -113,6 +114,7 @@ export default function ResultadosGrid({
     try {
       await juecesApi.post("/jueces/resultados/batch", {
         resultados: resultados?.resultados,
+        serie,
       });
       toast.success("Puestos calculados y guardados");
       await onSaved(); // Refresh data
@@ -127,6 +129,7 @@ export default function ResultadosGrid({
     sexo,
     vientoGlobal,
     openErrorModal,
+    serie,
     onSaved,
   ]);
 
@@ -150,6 +153,7 @@ export default function ResultadosGrid({
     try {
       const { data } = await juecesApi.post("/jueces/resultados/batch", {
         resultados: resultados.resultados,
+        serie,
       });
 
       const errorCount: number = data.errors?.length ?? 0;
@@ -177,14 +181,15 @@ export default function ResultadosGrid({
       setSaving(false);
     }
   }, [
-    pruebaId,
     categoriaId,
-    sexo,
-    esSuperJuez,
     config,
+    esSuperJuez,
+    pruebaId,
+    sexo,
     vientoGlobal,
-    onSaved,
     openErrorModal,
+    serie,
+    onSaved,
   ]);
 
   return (

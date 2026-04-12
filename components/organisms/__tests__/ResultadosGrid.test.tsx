@@ -173,40 +173,63 @@ describe("ResultadosGrid", () => {
       expect(cols.some((c) => c.headerName === "Int. 3")).toBe(true);
     });
 
-    it("includes Alturas column for tipoIntentos=altura", () => {
+    it("includes height columns for tipoIntentos=altura", () => {
       seedJuezSession();
-      render(<ResultadosGrid {...defaultProps} config={configAltura} />);
+      const atletaConAlturas: AtletaEntry = {
+        ...atleta,
+        resultadoAtleta: {
+          _id: "ra-1",
+          marca: null,
+          marcaParcial: null,
+          puesto: null,
+          viento: null,
+          observacion: null,
+          intentosSerie: [],
+          intentosAltura: [
+            { altura: "1.80", intentos: ["O"] },
+            { altura: "1.85", intentos: ["X", "O"] },
+          ],
+        },
+      };
+      render(
+        <ResultadosGrid
+          {...defaultProps}
+          config={configAltura}
+          atletas={[atletaConAlturas]}
+        />,
+      );
       const cols = capturedProps.columnDefs as { headerName?: string }[];
-      expect(cols.some((c) => c.headerName === "Alturas")).toBe(true);
+      expect(cols.some((c) => c.headerName === "1.80")).toBe(true);
+      expect(cols.some((c) => c.headerName === "1.85")).toBe(true);
     });
 
-    it("always includes Mejor Marca column", () => {
+    it("includes Mejor Marca column for serie/altura events", () => {
       seedJuezSession();
-      render(<ResultadosGrid {...defaultProps} />);
+      render(<ResultadosGrid {...defaultProps} config={configSerie} />);
       const cols = capturedProps.columnDefs as { headerName?: string }[];
       expect(cols.some((c) => c.headerName === "Mejor Marca")).toBe(true);
     });
 
-    it("MP column is editable only for super juez", () => {
+    it("Mejor Marca column is editable only for super juez in serie events", () => {
       seedSuperJuezSession();
-      render(<ResultadosGrid {...defaultProps} />);
+      render(<ResultadosGrid {...defaultProps} config={configSerie} />);
       const cols = capturedProps.columnDefs as {
-        field?: string;
+        headerName?: string;
         editable?: boolean;
       }[];
-      const mpCol = cols.find((c) => c.field === "marcaPersonal");
-      expect(mpCol?.editable).toBe(true);
+      const mejorMarcaCol = cols.find((c) => c.headerName === "Mejor Marca");
+      expect(mejorMarcaCol?.editable).toBe(true);
     });
 
-    it("MP column is not editable for regular juez", () => {
+    it("Mejor Marca column is not editable for regular juez in serie events", () => {
       seedJuezSession({ esSuperJuez: false });
-      render(<ResultadosGrid {...defaultProps} />);
+      render(<ResultadosGrid {...defaultProps} config={configSerie} />);
       const cols = capturedProps.columnDefs as {
-        field?: string;
+        headerName?: string;
         editable?: boolean;
       }[];
-      const mpCol = cols.find((c) => c.field === "marcaPersonal");
-      expect(mpCol?.editable).toBe(false);
+      const mejorMarcaCol = cols.find((c) => c.headerName === "Mejor Marca");
+      expect(mejorMarcaCol?.editable).toBe(false);
     });
   });
 

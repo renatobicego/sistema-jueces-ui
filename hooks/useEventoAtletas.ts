@@ -7,6 +7,7 @@ export function useEventoAtletas(
   torneoId: string,
   categoriaId: string,
   pruebaId: string,
+  serie?: string,
 ) {
   const [data, setData] = useState<EventoAtletas | null>(null);
   const [loading, setLoading] = useState(true);
@@ -16,16 +17,16 @@ export function useEventoAtletas(
     if (!torneoId || !categoriaId || !pruebaId) return;
     setLoading(true);
     try {
-      const res = await juecesApi.get(
-        `/jueces/torneo/${torneoId}/categoria/${categoriaId}/prueba/${pruebaId}`,
-      );
+      const url = `/jueces/torneo/${torneoId}/categoria/${categoriaId}/prueba/${pruebaId}`;
+      const params = serie ? { serie } : {};
+      const res = await juecesApi.get(url, { params });
       setData(res.data);
     } catch {
       setError("No se pudieron cargar los atletas.");
     } finally {
       setLoading(false);
     }
-  }, [torneoId, categoriaId, pruebaId]);
+  }, [torneoId, categoriaId, pruebaId, serie]);
 
   useEffect(() => {
     load();
