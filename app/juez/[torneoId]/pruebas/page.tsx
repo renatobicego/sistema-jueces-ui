@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@heroui/react";
 import { usePruebas } from "@/hooks/usePruebas";
@@ -13,6 +13,7 @@ import { LoadingCenter } from "@/components/atoms/LoadingCenter";
 import { ErrorText } from "@/components/atoms/ErrorText";
 import { useAuthStore } from "@/store/authStore";
 import type { Prueba, Categoria } from "@/types";
+import type { ResultadosGridRef } from "@/components/organisms/ResultadosGrid";
 
 const SEXO_OPTIONS = [
   { key: "M", label: "Masculino", value: "M" as const },
@@ -31,6 +32,7 @@ export default function PruebasPage() {
   const [selectedSexo, setSelectedSexo] = useState<"M" | "F" | null>(null);
   const [selectedHeat, setSelectedHeat] = useState<string>("Final_A");
   const [showHeatManagementModal, setShowHeatManagementModal] = useState(false);
+  const resultadosGridRef = useRef<ResultadosGridRef>(null);
 
   const canFetch = !!(selectedPrueba && selectedCategoria && selectedSexo);
 
@@ -149,6 +151,7 @@ export default function PruebasPage() {
               />
 
               <ResultadosGrid
+                ref={resultadosGridRef}
                 atletas={sexoData?.atletas ?? []}
                 config={data.config}
                 resultadoId={sexoData?.resultadoId ?? null}
@@ -158,6 +161,7 @@ export default function PruebasPage() {
                 sexo={selectedSexo}
                 onSaved={reload}
                 serie={selectedHeat}
+                pruebaName={selectedPrueba.nombre}
               />
             </div>
           )}
@@ -177,6 +181,9 @@ export default function PruebasPage() {
             currentHeat={selectedHeat}
             config={data?.config ?? null}
             athletes={data}
+            saveAll={async () =>
+              await resultadosGridRef.current?.handleSaveAll()
+            }
             onClose={() => setShowHeatManagementModal(false)}
             onSuccess={handleHeatManagementSuccess}
           />

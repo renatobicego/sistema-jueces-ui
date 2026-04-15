@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { CustomSelect } from "./CustomSelect";
-import { fetchHeats } from "@/lib/api/heats";
-import { useAuthStore } from "@/store/authStore";
+import { useHeats } from "@/hooks/useHeats";
 import type { SelectItem } from "@/types";
 
 interface HeatSelectorProps {
@@ -21,37 +19,7 @@ export function HeatSelector({
   selectedHeat,
   onHeatChange,
 }: HeatSelectorProps) {
-  const [heats, setHeats] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const token = useAuthStore((state) => state.juezSession?.token ?? "");
-
-  useEffect(() => {
-    async function loadHeats() {
-      if (!token) {
-        setLoading(false);
-        setHeats(["Final_A"]);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const response = await fetchHeats({
-          torneoId,
-          pruebaId,
-          categoriaId,
-        });
-        setHeats(response.heats);
-      } catch (error) {
-        console.error("Error loading heats:", error);
-        // Default to Final_A on error
-        setHeats(["Final_A"]);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadHeats();
-  }, [torneoId, pruebaId, categoriaId, token]);
+  const { heats, loading } = useHeats({ torneoId, pruebaId, categoriaId });
 
   const heatItems: SelectItem<string>[] = heats.map((heat) => ({
     key: heat,

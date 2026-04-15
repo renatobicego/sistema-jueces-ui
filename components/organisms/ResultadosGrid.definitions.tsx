@@ -48,6 +48,7 @@ export function buildColDefs(
   config: ConfigPrueba | undefined | null,
   esSuperJuez: boolean,
   alturas: string[] = [],
+  pruebaName?: string,
 ): ColDef<GridRow>[] {
   const base: ColDef<GridRow>[] = [
     { field: "numero", headerName: "#", width: 60, sortable: true },
@@ -77,16 +78,6 @@ export function buildColDefs(
       sortable: true,
       filter: true,
     },
-    // {
-    //   headerName: "MP",
-    //   field: "marcaPersonal",
-    //   width: 90,
-    //   editable: esSuperJuez,
-    //   cellStyle: { color: "#64748b", fontSize: "12px" },
-    //   onCellValueChanged: (p: NewValueParams<GridRow>) => {
-    //     if (p.data) p.data._dirty = true;
-    //   },
-    // },
     {
       field: "_observacion",
       headerName: "Obs.",
@@ -135,6 +126,15 @@ export function buildColDefs(
     },
   ];
 
+  const baseEnd: ColDef<GridRow>[] = [
+    {
+      headerName: "Marca Personal",
+      field: "marcaPersonal",
+      width: 140,
+      cellStyle: { color: "#64748b", fontSize: "12px" },
+    },
+  ];
+
   // Add hidden marcaParcial column for sorting (only for serie)
   if (config?.tipoIntentos === "serie") {
     base.push({
@@ -155,6 +155,15 @@ export function buildColDefs(
 
   if (!config || config.tipoIntentos === "ninguno") {
     const tipoMarca = (config?.tipoMarca ?? "SPRINT") as TipoMarca;
+    if (tipoMarca === "SPRINT" || pruebaName === "400") {
+      base.push({
+        field: "_andarivel",
+        headerName: "Andarivel",
+        width: 100,
+        editable: true,
+        type: "number",
+      });
+    }
     base.push({
       field: "_marca",
       headerName: "Marca",
@@ -224,6 +233,7 @@ export function buildColDefs(
                 puesto: null,
                 intentosSerie: [],
                 intentosAltura: [],
+                andarivel: null,
               };
             }
             const arr = [...(p.data.resultadoAtleta.intentosSerie ?? [])];
@@ -274,6 +284,7 @@ export function buildColDefs(
                 observacion: null,
                 intentosSerie: [],
                 intentosAltura: [],
+                andarivel: null,
               };
             }
             const arr = [...(p.data.resultadoAtleta.intentosSerie ?? [])];
@@ -389,5 +400,5 @@ export function buildColDefs(
     });
   }
 
-  return base;
+  return [...base, ...baseEnd];
 }

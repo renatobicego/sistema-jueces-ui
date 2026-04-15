@@ -106,6 +106,7 @@ export interface ResultadoAtleta {
   observacion: "DNS" | "DNF" | "NM" | "DQ" | null;
   intentosSerie: IntentoSerie[];
   intentosAltura: IntentoAltura[];
+  andarivel: number | null;
 }
 
 export interface AtletaEntry {
@@ -170,6 +171,7 @@ export interface GridRow extends AtletaEntry {
   _dirty: boolean;
   _manualFinalMark?: boolean;
   _puesto?: number;
+  _andarivel?: number | null;
 }
 
 // ── Component prop types ──────────────────────────────────────────────────────
@@ -218,6 +220,7 @@ export interface ResultadosGridProps {
   sexo: "M" | "F";
   onSaved: () => Promise<void>;
   serie: string;
+  pruebaName: string;
 }
 
 export interface SuperJuezGuardProps {
@@ -262,3 +265,9 @@ export interface CreateHeatsResponse {
   athletesMoved: number;
   errors?: string[];
 }
+
+export type HeatMode =
+  | "create-series"
+  | "create-semifinal"
+  | "create-final-a"
+  | "create-final-b";

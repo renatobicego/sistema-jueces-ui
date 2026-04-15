@@ -152,9 +152,9 @@ export const createBatchPayload = (
   const validationErrors = validateGridRows(rows, config);
   if (validationErrors.length > 0) {
     setSaveErrors(
-      validationErrors.map(({ atletaNombre, field, value }) => ({
+      validationErrors.map(({ atletaNombre, field, value, message }) => ({
         atletaNombre,
-        error: `${field}: "${value}" tiene formato incorrecto`,
+        error: `${field}: "${value}" ${message ?? "tiene formato incorrecto"}`,
       })),
     );
     openErrorModal();
@@ -177,6 +177,7 @@ export const createBatchPayload = (
       ...(shouldCalculatePuestos && {
         puesto: row._puesto,
       }),
+      andarivel: row._andarivel,
     };
 
     if (config?.tipoIntentos === "serie") {

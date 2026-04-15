@@ -12,6 +12,7 @@ export function toGridRow(e: AtletaEntry): GridRow {
     _observacion: ra?.observacion ?? "",
     _puesto: ra?.puesto ?? undefined,
     _dirty: false,
+    _andarivel: ra?.andarivel,
   };
 }
 

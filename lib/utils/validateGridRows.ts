@@ -6,7 +6,19 @@ export interface GridValidationError {
   atletaNombre: string;
   field: string;
   value: string;
+  message?: string;
 }
+
+const hasDuplicates = (arr: (number | null | undefined)[]) => {
+  const duplicateIndices: (number | null | undefined)[] = [];
+
+  arr.forEach((value, index) => {
+    if (arr.indexOf(value) !== index) {
+      duplicateIndices.push(index);
+    }
+  });
+  return duplicateIndices;
+};
 
 export function validateGridRows(
   rows: GridRow[],
@@ -54,6 +66,25 @@ export function validateGridRows(
     }
 
     // altura: no marca format to validate
+  }
+
+  // validate andariveles
+  const andariveles = rows
+    .filter((row) => row._andarivel)
+    .map((row) => row._andarivel);
+  const duplicateIndexes = hasDuplicates(andariveles);
+  if (duplicateIndexes.length) {
+    const rowsDuplicated = duplicateIndexes
+      .filter(Boolean)
+      .map((index) => rows[index as number]);
+    rowsDuplicated.forEach((row) => {
+      errors.push({
+        atletaNombre: row.atleta.nombre_apellido,
+        field: "Andarivel",
+        value: row._andarivel?.toString() ?? "",
+        message: "andarivel repetido",
+      });
+    });
   }
 
   return errors;
