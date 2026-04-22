@@ -77,6 +77,7 @@ export default function HeatManagementModal({
     torneoId,
     pruebaId,
     categoriaId,
+    sexo,
   });
 
   // Determine available modes based on current state

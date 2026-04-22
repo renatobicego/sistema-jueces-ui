@@ -208,6 +208,7 @@ export interface RegistrarAtletaModalProps {
   pruebaId: string;
   categoriaId: string;
   onSuccess: () => void;
+  heat?: string;
 }
 
 export interface ResultadosGridProps {

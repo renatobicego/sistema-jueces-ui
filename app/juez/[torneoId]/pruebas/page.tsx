@@ -11,7 +11,6 @@ import RegistrarAtletaModal from "@/components/organisms/RegistrarAtletaModal";
 import HeatManagementModal from "@/components/organisms/HeatManagementModal";
 import { LoadingCenter } from "@/components/atoms/LoadingCenter";
 import { ErrorText } from "@/components/atoms/ErrorText";
-import { useAuthStore } from "@/store/authStore";
 import type { Prueba, Categoria } from "@/types";
 import type { ResultadosGridRef } from "@/components/organisms/ResultadosGrid";
 
@@ -30,7 +29,6 @@ const STORAGE_KEYS = {
 export default function PruebasPage() {
   const { torneoId } = useParams<{ torneoId: string }>();
   const { pruebas, loading, error } = usePruebas(torneoId);
-  const esSuperJuez = useAuthStore((s) => s.juezSession?.esSuperJuez ?? false);
 
   const [selectedPrueba, setSelectedPrueba] = useState<Prueba | null>(null);
   const [selectedCategoria, setSelectedCategoria] = useState<Categoria | null>(
@@ -186,18 +184,14 @@ export default function PruebasPage() {
                     torneoId={torneoId}
                     pruebaId={selectedPrueba._id}
                     categoriaId={selectedCategoria!._id}
+                    heat={selectedHeat}
                     onSuccess={async () => {
                       await resultadosGridRef.current?.handleSaveAll();
                     }}
                   />
-                  {esSuperJuez && (
-                    <Button
-                      variant="secondary"
-                      onPress={handleManageHeatsClick}
-                    >
-                      Gestionar Series
-                    </Button>
-                  )}
+                  <Button variant="secondary" onPress={handleManageHeatsClick}>
+                    Gestionar Series
+                  </Button>
                 </div>
               </div>
 

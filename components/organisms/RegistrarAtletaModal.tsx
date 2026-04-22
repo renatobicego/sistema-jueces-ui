@@ -24,6 +24,7 @@ export default function RegistrarAtletaModal({
   pruebaId,
   categoriaId,
   onSuccess,
+  heat = "Final_A",
 }: RegistrarAtletaModalProps) {
   const state = useOverlayState();
   const [dni, setDni] = useState("");
@@ -68,6 +69,7 @@ export default function RegistrarAtletaModal({
         dni: dni.trim(),
         categoriaId,
         pruebaId,
+        heat,
         ...(notFound ? form : {}),
       });
       onSuccess();
