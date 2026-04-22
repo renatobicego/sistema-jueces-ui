@@ -6,9 +6,15 @@ interface UseHeatsParams {
   torneoId: string;
   pruebaId: string;
   categoriaId: string;
+  sexo: "M" | "F";
 }
 
-export function useHeats({ torneoId, pruebaId, categoriaId }: UseHeatsParams) {
+export function useHeats({
+  torneoId,
+  pruebaId,
+  categoriaId,
+  sexo,
+}: UseHeatsParams) {
   const [heats, setHeats] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +35,7 @@ export function useHeats({ torneoId, pruebaId, categoriaId }: UseHeatsParams) {
           torneoId,
           pruebaId,
           categoriaId,
+          sexo,
         });
         setHeats(response.heats);
       } catch (err) {
@@ -42,7 +49,7 @@ export function useHeats({ torneoId, pruebaId, categoriaId }: UseHeatsParams) {
     }
 
     loadHeats();
-  }, [torneoId, pruebaId, categoriaId, token]);
+  }, [torneoId, pruebaId, categoriaId, token, sexo]);
 
   return { heats, loading, error };
 }

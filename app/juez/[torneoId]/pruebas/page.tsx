@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { Button } from "@heroui/react";
 import { usePruebas } from "@/hooks/usePruebas";
@@ -19,6 +19,13 @@ const SEXO_OPTIONS = [
   { key: "M", label: "Masculino", value: "M" as const },
   { key: "F", label: "Femenino", value: "F" as const },
 ];
+
+const STORAGE_KEYS = {
+  PRUEBA: "juez_pruebas_selectedPrueba",
+  CATEGORIA: "juez_pruebas_selectedCategoria",
+  SEXO: "juez_pruebas_selectedSexo",
+  HEAT: "juez_pruebas_selectedHeat",
+};
 
 export default function PruebasPage() {
   const { torneoId } = useParams<{ torneoId: string }>();
@@ -60,14 +67,65 @@ export default function PruebasPage() {
     value: c,
   }));
 
+  // Restore from localStorage on mount
+  useEffect(() => {
+    if (typeof window === "undefined" || !pruebas.length) return;
+
+    const storedPruebaId = sessionStorage.getItem(STORAGE_KEYS.PRUEBA);
+    const storedCategoriaId = sessionStorage.getItem(STORAGE_KEYS.CATEGORIA);
+    const storedSexo = sessionStorage.getItem(STORAGE_KEYS.SEXO) as
+      | "M"
+      | "F"
+      | null;
+    const storedHeat = sessionStorage.getItem(STORAGE_KEYS.HEAT) ?? "Final_A";
+
+    if (storedPruebaId) {
+      const prueba = pruebas.find((p) => p._id === storedPruebaId);
+      if (prueba) {
+        setSelectedPrueba(prueba);
+
+        if (storedCategoriaId) {
+          const categoria = prueba.categorias.find(
+            (c) => c._id === storedCategoriaId,
+          );
+          if (categoria) {
+            setSelectedCategoria(categoria);
+          }
+        }
+      }
+    }
+
+    if (storedSexo) {
+      setSelectedSexo(storedSexo);
+    }
+
+    if (storedHeat) {
+      setSelectedHeat(storedHeat);
+    }
+  }, [pruebas]);
+
   const handlePruebaChange = (p: Prueba) => {
     setSelectedPrueba(p);
     setSelectedCategoria(null);
     setSelectedHeat("Final_A"); // Reset heat when prueba changes
+    sessionStorage.setItem(STORAGE_KEYS.PRUEBA, p._id);
+    sessionStorage.removeItem(STORAGE_KEYS.CATEGORIA);
+    sessionStorage.setItem(STORAGE_KEYS.HEAT, "Final_A");
+  };
+
+  const handleCategoriaChange = (c: Categoria) => {
+    setSelectedCategoria(c);
+    sessionStorage.setItem(STORAGE_KEYS.CATEGORIA, c._id);
+  };
+
+  const handleSexoChange = (sexo: "M" | "F") => {
+    setSelectedSexo(sexo);
+    sessionStorage.setItem(STORAGE_KEYS.SEXO, sexo);
   };
 
   const handleHeatChange = (heat: string) => {
     setSelectedHeat(heat);
+    sessionStorage.setItem(STORAGE_KEYS.HEAT, heat);
   };
 
   const handleManageHeatsClick = () => {
@@ -101,14 +159,14 @@ export default function PruebasPage() {
           placeholder="Seleccioná una categoría"
           items={categoriaOptions}
           value={selectedCategoria ?? undefined}
-          onChange={setSelectedCategoria}
+          onChange={handleCategoriaChange}
         />
         <CustomSelect
           label="Sexo"
           placeholder="Seleccioná sexo"
           items={SEXO_OPTIONS}
           value={selectedSexo ?? undefined}
-          onChange={setSelectedSexo}
+          onChange={handleSexoChange}
         />
       </div>
 
@@ -128,7 +186,9 @@ export default function PruebasPage() {
                     torneoId={torneoId}
                     pruebaId={selectedPrueba._id}
                     categoriaId={selectedCategoria!._id}
-                    onSuccess={reload}
+                    onSuccess={async () => {
+                      await resultadosGridRef.current?.handleSaveAll();
+                    }}
                   />
                   {esSuperJuez && (
                     <Button
@@ -148,6 +208,7 @@ export default function PruebasPage() {
                 categoriaId={selectedCategoria!._id}
                 selectedHeat={selectedHeat}
                 onHeatChange={handleHeatChange}
+                sexo={selectedSexo}
               />
 
               <ResultadosGrid

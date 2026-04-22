@@ -93,6 +93,10 @@ export default function JuecesPage() {
           </Button>
         </div>
       </div>
+      <p>
+        Seleccione las prubeas a las que el juez tendrá acceso. En caso de no
+        seleccionar ninguna, tendrá acceso a todas las pruebas
+      </p>
 
       <JuecesGrid
         jueces={jueces}

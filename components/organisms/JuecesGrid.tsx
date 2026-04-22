@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { AgGridReact } from "ag-grid-react";
 import { ModuleRegistry, AllCommunityModule } from "ag-grid-community";
 import type { JuecesGridProps } from "@/types";
@@ -13,26 +13,25 @@ export default function JuecesGrid({
   onAprobar,
   onEliminar,
 }: JuecesGridProps) {
-  const [pendingAssignments, setPendingAssignments] = useState<
-    Record<string, string[]>
-  >({});
-
   const colDefs = useMemo(
+    () => buildJuecesColDefs(pruebas, onAprobar, onEliminar),
+    [pruebas, onAprobar, onEliminar],
+  );
+
+  // Initialize row data with pendingPruebasAsignadas field
+  const rowData = useMemo(
     () =>
-      buildJuecesColDefs(
-        pruebas,
-        pendingAssignments,
-        setPendingAssignments,
-        onAprobar,
-        onEliminar,
-      ),
-    [pruebas, pendingAssignments, onAprobar, onEliminar],
+      jueces.map((juez) => ({
+        ...juez,
+        pendingPruebasAsignadas: juez.pruebasAsignadas,
+      })),
+    [jueces],
   );
 
   return (
     <div className="ag-theme-quartz" style={{ height: 400 }}>
       <AgGridReact
-        rowData={jueces}
+        rowData={rowData}
         columnDefs={colDefs}
         rowHeight={52}
         defaultColDef={{ resizable: true }}

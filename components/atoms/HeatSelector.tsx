@@ -3,6 +3,7 @@
 import { CustomSelect } from "./CustomSelect";
 import { useHeats } from "@/hooks/useHeats";
 import type { SelectItem } from "@/types";
+import { Spinner } from "@heroui/react";
 
 interface HeatSelectorProps {
   torneoId: string;
@@ -10,6 +11,7 @@ interface HeatSelectorProps {
   categoriaId: string;
   selectedHeat: string;
   onHeatChange: (heat: string) => void;
+  sexo: "M" | "F";
 }
 
 export function HeatSelector({
@@ -18,8 +20,14 @@ export function HeatSelector({
   categoriaId,
   selectedHeat,
   onHeatChange,
+  sexo,
 }: HeatSelectorProps) {
-  const { heats, loading } = useHeats({ torneoId, pruebaId, categoriaId });
+  const { heats, loading } = useHeats({
+    torneoId,
+    pruebaId,
+    categoriaId,
+    sexo,
+  });
 
   const heatItems: SelectItem<string>[] = heats.map((heat) => ({
     key: heat,
@@ -28,7 +36,11 @@ export function HeatSelector({
   }));
 
   if (loading) {
-    return <div className="text-gray-500 text-sm">Cargando series...</div>;
+    return (
+      <div className="flex justify-center">
+        <Spinner size="sm" />;
+      </div>
+    );
   }
 
   return (

@@ -2,27 +2,26 @@ import type {
   CellClickedEvent,
   ColDef,
   ICellRendererParams,
+  ValueSetterParams,
+  ValueGetterParams,
 } from "ag-grid-community";
-import { Button, Chip } from "@heroui/react";
+import { Button, Chip, toast } from "@heroui/react";
 import type { AccesoJuez, JuecesGridProps, Prueba } from "@/types";
 import { CustomSelect } from "@/components/atoms/CustomSelect";
-import { getAssignedPruebas } from "@/lib/utils/grid";
 
 type OnAprobar = JuecesGridProps["onAprobar"];
 type OnEliminar = JuecesGridProps["onEliminar"];
 
+// Extended type to include pending assignments in row data
+type AccesoJuezWithPending = AccesoJuez & {
+  pendingPruebasAsignadas: string[];
+};
+
 export function buildJuecesColDefs(
   pruebas: Prueba[],
-  pendingAssignments: Record<string, string[]>,
-  setPendingAssignments: React.Dispatch<
-    React.SetStateAction<Record<string, string[]>>
-  >,
   onAprobar: OnAprobar,
   onEliminar: OnEliminar,
-): ColDef<AccesoJuez>[] {
-  const getAssign = (juezId: string, current: string[]) =>
-    getAssignedPruebas(pendingAssignments, juezId, current);
-
+): ColDef<AccesoJuezWithPending>[] {
   return [
     {
       field: "nombre",
@@ -37,13 +36,15 @@ export function buildJuecesColDefs(
       flex: 2,
       sortable: true,
       filter: true,
-      onCellClicked: (params: CellClickedEvent<AccesoJuez>) =>
-        navigator.clipboard.writeText(params.value),
+      onCellClicked: (params: CellClickedEvent<AccesoJuezWithPending>) => {
+        navigator.clipboard.writeText(params.value);
+        toast("ID copiado en el portapales", { timeout: 3000 });
+      },
     },
     {
       headerName: "Estado",
-      flex: 1,
-      cellRenderer: (p: ICellRendererParams<AccesoJuez>) => (
+      width: 110,
+      cellRenderer: (p: ICellRendererParams<AccesoJuezWithPending>) => (
         <Chip
           size="sm"
           color={p.data?.aprobado ? "success" : "warning"}
@@ -54,26 +55,36 @@ export function buildJuecesColDefs(
       ),
     },
     {
+      field: "pendingPruebasAsignadas",
       headerName: "Pruebas asignadas",
-      flex: 3,
-      cellRenderer: (p: ICellRendererParams<AccesoJuez>) => {
+      flex: 2.5,
+      valueGetter: (params: ValueGetterParams<AccesoJuezWithPending>) => {
+        return params.data?.pendingPruebasAsignadas ?? [];
+      },
+      valueSetter: (params: ValueSetterParams<AccesoJuezWithPending>) => {
+        if (params.data) {
+          params.data.pendingPruebasAsignadas = params.newValue;
+
+          return true;
+        }
+        return false;
+      },
+      cellRenderer: (p: ICellRendererParams<AccesoJuezWithPending>) => {
         if (!p.data) return null;
-        const assigned = getAssign(p.data._id, p.data.pruebasAsignadas);
         return (
-          <CustomSelect
-            value={assigned.length === 1 ? assigned[0] : undefined}
-            onChange={(key) =>
-              setPendingAssignments((prev) => ({
-                ...prev,
-                [p.data!._id]: [key],
-              }))
-            }
+          <CustomSelect<string[]>
+            value={p.data.pendingPruebasAsignadas}
+            onChange={(key) => {
+              p.node.setDataValue("pendingPruebasAsignadas", key);
+            }}
             items={pruebas.map((pr) => ({
               key: pr._id,
               label: pr.nombre,
               value: pr._id,
             }))}
-            className="min-w-[200px]"
+            className="mt-1 min-w-[200px]"
+            placeholder="Seleccionar Pruebas Asignadas"
+            selectionMode="multiple"
           />
         );
       },
@@ -81,27 +92,50 @@ export function buildJuecesColDefs(
     {
       headerName: "Acciones",
       flex: 2,
-      cellRenderer: (p: ICellRendererParams<AccesoJuez>) => {
+      minWidth: 300,
+      cellRenderer: (p: ICellRendererParams<AccesoJuezWithPending>) => {
         if (!p.data) return null;
-        const assigned = getAssign(p.data._id, p.data.pruebasAsignadas);
         return (
           <div className="flex items-center gap-2 h-full">
             {!p.data.aprobado ? (
               <Button
                 size="sm"
                 variant="secondary"
-                onPress={() => onAprobar(p.data!._id, true, assigned)}
+                onPress={() =>
+                  onAprobar(p.data!._id, true, p.data!.pendingPruebasAsignadas)
+                }
               >
                 Aprobar
               </Button>
             ) : (
-              <Button
-                size="sm"
-                variant="ghost"
-                onPress={() => onAprobar(p.data!._id, false, assigned)}
-              >
-                Revocar
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onPress={() =>
+                    onAprobar(
+                      p.data!._id,
+                      true,
+                      p.data!.pendingPruebasAsignadas,
+                    )
+                  }
+                >
+                  Actualizar
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onPress={() =>
+                    onAprobar(
+                      p.data!._id,
+                      false,
+                      p.data!.pendingPruebasAsignadas,
+                    )
+                  }
+                >
+                  Revocar
+                </Button>
+              </>
             )}
             <Button
               size="sm"

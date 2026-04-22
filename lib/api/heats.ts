@@ -8,12 +8,13 @@ export async function fetchHeats(params: {
   torneoId: string;
   pruebaId: string;
   categoriaId: string;
+  sexo: "M" | "F";
 }): Promise<{ heats: string[] }> {
-  const { torneoId, pruebaId, categoriaId } = params;
+  const { torneoId, pruebaId, categoriaId, sexo } = params;
 
   try {
     const { data } = await juecesApi.get(
-      `/jueces/torneo/${torneoId}/categoria/${categoriaId}/prueba/${pruebaId}/heats`,
+      `/jueces/torneo/${torneoId}/categoria/${categoriaId}/prueba/${pruebaId}/heats/${sexo}`,
     );
 
     return data.heats.length ? data : { heats: ["Final_A"] };
